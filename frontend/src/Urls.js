@@ -1,1 +1,1 @@
-export const baseUrl = `https://iiita-classroom.onrender.com`;
+export const baseUrl = `http://localhost:5000`;

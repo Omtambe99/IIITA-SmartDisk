@@ -24,38 +24,27 @@ router.post("/login", async (req, res) => {
         }
 
         // Dynamic model selection based on signIn type
-        // User is a Mongoose model(repr. a mongoDB collection)
         const User = models[signIn];
 
         // Check user exists or not
-        // findone({email:email }) -> asks MongoDb for one document whose email field equals the povided email variable
         const user = await User.findOne({ email: email });
 
         if (!user) {
             return res.status(400).json({
-                msg: "User does not exist, email Not found"
+                msg: "User does not exist"
             });
         }
 
         // Check if the password is correct
-        // const checkPassword = await bcrypt.compare(password, user.password);
-        // if (!checkPassword) {
-        //     return res.status(400).json({
-        //         message: "Incorrect email or password"
-        //     });
-        // }
-        if (password !== user.password) {
-          return res
-            .status(400)
-            .json({ message: "Incorrect email or password" });
+        const checkPassword = await bcrypt.compare(password, user.password);
+        if (!checkPassword) {
+            return res.status(400).json({
+                message: "Incorrect email or password"
+            });
         }
 
-
         // Generate a JWT token
-        // { email: email, role: signIn, name: user.name } -> this the data encoding in the token,only visible to one having the token
-        // 
-
-        const token = jwt.sign({ email: email, role: signIn, name: user.name }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ email: email, role: signIn, name: user.name }, 'sadadsa', { expiresIn: '1h' });
 
         // Exclude password and possibly other sensitive information
         user.password = undefined;

@@ -26,17 +26,13 @@ try{
             msg: "User not exists"
         })
     }
-    // const checkPassword = await bcrypt.compare(password,student.password);
-    // if(await !checkPassword){
-    //     return res.status(400).json({
-    //         message:"Incorrect email or password"
-    //     })
+    const checkPassword = await bcrypt.compare(password,student.password);
+    if(await !checkPassword){
+        return res.status(400).json({
+            message:"Incorrect email or password"
+        })
         
-    // }
-    if (password !== student.password) {
-      return res.status(400).json({ message: "Incorrect email or password" });
     }
-
     // const courses = await Student.courses
     const token = jwt.sign({ email: email }, 'sadadsa', { expiresIn: '1h' });
     // const { password: _, ...studentData } = student.toObject();

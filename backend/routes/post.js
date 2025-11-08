@@ -1,14 +1,14 @@
 const {Router} = require("express");
 const {Course, Student,Professor} = require("../models/index"); 
 const Userauthenticate = require("../middleware/user");
-const upload = require('../middleware/upload');
+const upload = require('../middleware/Upload');
 const router = Router();
 
 router.post("/:courseid", Userauthenticate, upload.single('file'), async (req, res) => {
     const courseid = req.params.courseid;
     const author = req.name; // Assuming name is stored in user after authentication
     const content = req.body.content; 
-    const fileUrl = req.file ? req.file.location : null; // URL returned from S3
+    const fileUrl = req.file ? `/uploads/${req.file.filename}` : null; // Local file path
     const authorEmail = req.email;
 
     const courseDetails = await Course.findOne({courseid: courseid});

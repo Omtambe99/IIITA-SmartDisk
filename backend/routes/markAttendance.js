@@ -5,6 +5,7 @@ const { Course, Assignment } = require('../models/index'); // Adjust path as nee
 const Userauthenticate = require('../middleware/user');
 const professorauthenticate = require('../middleware/professorAuth');
 
+// Route to get students enrolled in a specific course 
 router.get("/:courseId", professorauthenticate ,async (req, res) => {
     const { courseId } = req.params;
 
@@ -33,7 +34,7 @@ router.get("/:courseId", professorauthenticate ,async (req, res) => {
         });
     }
 });
-
+// Route to mark attendance for students in a specific course
 router.post('/:courseId', professorauthenticate,async (req, res) => {
     console.log(req.body);
     const { courseId } = req.params;

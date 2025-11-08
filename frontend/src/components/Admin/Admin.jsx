@@ -18,6 +18,7 @@ function Admin() {
   const BASE_URL = 'http://your-backend-url.com'; // Replace with your backend URL
   const [showCourseForm, setShowCourseForm] = useState(false);
   const [showAdminForm, setShowAdminForm] = useState(false);
+  const [showProfessorForm, setShowProfessorForm] = useState(false);
 
   const {data,setData} = useContext(UserContext);
 
@@ -402,6 +403,125 @@ function Admin() {
 
   const [showEditForm, setShowEditForm] = useState(false);
   
+  const ProfessorForm = ({ closeForm }) => {
+    const [formState, setFormState] = useState({
+      name: '',
+      email: '',
+      password: '',
+      id: '',
+    });
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    const handleInputChange = (event, field) => {
+      setFormState({ ...formState, [field]: event.target.value });
+    };
+
+    const handleImageChange = (event) => {
+      setSelectedImage(event.target.files[0]);
+    };
+
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      
+      try {
+        const formData = new FormData();
+        formData.append('name', formState.name);
+        formData.append('email', formState.email);
+        formData.append('password', formState.password);
+        formData.append('id', formState.id);
+        if (selectedImage) {
+          formData.append('image', selectedImage);
+        }
+
+        const response = await axios.post(`${baseUrl}/admin/addProfessor`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        if (response.status === 200) {
+          alert('Professor added successfully!');
+          closeForm();
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to add professor');
+      }
+    };
+
+    return (
+      <div className="fixed inset-0 flex justify-center items-center z-50">
+        <div className="bg-gray-700 bg-opacity-50 w-full h-full flex justify-center items-center">
+          <div className="relative bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full m-4">
+            <button onClick={closeForm} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} className="h-6 w-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 className="text-2xl font-bold text-center mb-6">Add New Professor</h2>
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <div>
+                <label className="text-sm font-medium text-gray-600 block mb-2">Name</label>
+                <input
+                  type="text"
+                  value={formState.name}
+                  onChange={(e) => handleInputChange(e, 'name')}
+                  className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-600 block mb-2">Email</label>
+                <input
+                  type="email"
+                  value={formState.email}
+                  onChange={(e) => handleInputChange(e, 'email')}
+                  className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-600 block mb-2">Password</label>
+                <input
+                  type="password"
+                  value={formState.password}
+                  onChange={(e) => handleInputChange(e, 'password')}
+                  className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-600 block mb-2">Professor ID</label>
+                <input
+                  type="text"
+                  value={formState.id}
+                  onChange={(e) => handleInputChange(e, 'id')}
+                  className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-600 block mb-2">Profile Picture</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex justify-end mt-6">
+                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-6 rounded-lg transition duration-200 ease-in-out transform hover:-translate-y-1">
+                  Add Professor
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const EditForm = ({ closeForm }) => {
     const [formState, setFormState] = useState({
       courseName: '',
@@ -558,6 +678,12 @@ function Admin() {
       >
         Delete Class
       </button>
+      <button
+        className="text-white font-semibold py-3 px-6 rounded-lg bg-blue-500 border border-blue-500 hover:bg-blue-600 hover:border-blue-600 transition-all duration-300 ease-out transform hover:scale-105 w-full sm:w-auto"
+        onClick={() => setShowProfessorForm(true)}
+      >
+        Add New Professor
+      </button>
       {/*<button
         className="text-white font-semibold py-3 px-6 rounded-lg bg-blue-500 border border-blue-500 hover:bg-blue-600 hover:border-blue-600 transition-all duration-300 ease-out transform hover:scale-105 w-full sm:w-auto"
         onClick={() => setShowAdminForm(true)}
@@ -567,6 +693,7 @@ function Admin() {
       {showCourseForm && <CourseForm closeForm={() => setShowCourseForm(false)} />}
       {showEditForm && <EditForm closeForm={() => setShowEditForm(false)} />}
       {showAdminForm && <AdminForm closeForm={() => setShowAdminForm(false)} />}
+      {showProfessorForm && <ProfessorForm closeForm={() => setShowProfessorForm(false)} />}
       {showDeleteForm && <DeleteForm closeForm={() => setShowDeleteForm(false)} />}
     </div>
     <div className="flex flex-wrap mt-6 ">

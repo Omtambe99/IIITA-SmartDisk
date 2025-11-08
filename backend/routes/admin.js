@@ -32,7 +32,7 @@ const upload = require('../middleware/Upload');
 router.post("/addStudent", upload.single('image'), async (req, res) => {
     console.log(req.file);
     const { name, email, password, rollno } = req.body;
-    const imageUrl = req.file ? req.file.location : null;  // Use the uploaded file URL
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;  // Local uploaded file path
 
     const isExist = await Student.findOne({ email: email });
     if (isExist) {
@@ -132,7 +132,7 @@ router.post("/addStudentSubject", async (req, res) => {
 
 router.post("/addProfessor", upload.single('image'), async (req, res) => {
     const { name, email, password, id } = req.body;
-    const imageUrl = req.file ? req.file.location : null;
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
     const isExist = await Professor.findOne({ email: email, id: id });
     if (isExist) {
